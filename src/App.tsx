@@ -1,135 +1,91 @@
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Birthday from "./Birthday";
 
-interface Countdown {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
-// 🎯 Target Date: February 27 (auto adjusts yearly)
-const getTargetDate = () => {
-  const now = new Date();
-  const target = new Date(now.getFullYear(), 1, 27, 0, 0, 0); // Feb = 1
-
-  if (now > target) {
-    target.setFullYear(now.getFullYear() + 1);
-  }
-
-  return target;
-};
-
-const TARGET_DATE = getTargetDate();
-
-const getCountdown = (): Countdown => {
-  const now = new Date();
-  const diff = TARGET_DATE.getTime() - now.getTime();
-
-  return {
-    days: Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24))),
-    hours: Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24)),
-    minutes: Math.max(0, Math.floor((diff / (1000 * 60)) % 60)),
-    seconds: Math.max(0, Math.floor((diff / 1000) % 60)),
-  };
-};
-
-const petals = Array.from({ length: 10 });
-
-const App: React.FC = () => {
-  const [countdown, setCountdown] = useState<Countdown>(getCountdown());
-  const [showBirthday, setShowBirthday] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newTime = getCountdown();
-      setCountdown(newTime);
-
-      if (
-        newTime.days === 0 &&
-        newTime.hours === 0 &&
-        newTime.minutes === 0 &&
-        newTime.seconds === 0
-      ) {
-        clearInterval(interval);
-        setShowBirthday(true);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (showBirthday) return <Birthday />;
-
+const Birthday = () => {
   return (
-    <div className="relative min-h-screen w-full bg-linear-to-br from-purple-500 via-purple-800 to-purple-600 overflow-hidden py-5 flex items-center justify-center px-4 text-white">
+    <div className="relative min-h-screen flex items-center justify-center bg-linear-to-br from-purple-500 via-purple-800 to-purple-600 text-white px-4 overflow-hidden py-5">
       
-      {/* Floating petals */}
-      {petals.map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-6 h-6 md:w-10 md:h-10 bg-white rounded-full opacity-30"
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, -40, 0],
-            x: [0, 30, 0],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 12 + Math.random() * 6,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
+      {/* Soft glowing background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.15),transparent_60%)]"></div>
 
-      {/* Countdown Card */}
       <motion.div
-        className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-6 md:p-10 max-w-md w-full text-center"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="relative z-10 text-center max-w-2xl w-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl px-5 py-8 md:px-10 md:py-12"
       >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3">
+        <motion.h1
+          initial={{ scale: 0.85, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 tracking-wide"
+        >
           🎉 Happy Birthday 🎉
-        </h1>
+        </motion.h1>
 
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-          in Advance, Mom ❤️
-        </h2>
+        <motion.h2
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-white"
+        >
+          Mom ❤️
+        </motion.h2>
 
-        <div className="bg-black/30 rounded-2xl py-4 px-4 mb-6 shadow-inner">
-          <div className="flex justify-center gap-3 text-lg sm:text-xl font-mono font-bold">
-            <TimeBox label="Days" value={countdown.days} />
-            <TimeBox label="Hours" value={countdown.hours} />
-            <TimeBox label="Min" value={countdown.minutes} />
-            <TimeBox label="Sec" value={countdown.seconds} />
-          </div>
-        </div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 1 }}
+          className="text-sm sm:text-base md:text-lg leading-relaxed bg-black/30 backdrop-blur-md p-4 sm:p-5 md:p-6 rounded-2xl text-white/95"
+        >
+          Today, we celebrate the faithfulness of God in Mummy Yanu's life! She's
+          been a constant source of joy, comfort, and strength — not just for us,
+          her children, but for friends, family, and everyone privileged to cross
+          her path. She is that special one we turn to in times of need, who
+          corrects with love, encourages with kindness, and uplifts with her
+          presence.
 
-        <p className="text-sm sm:text-base md:text-lg leading-relaxed bg-black/30 rounded-xl p-4">
-          Even before the day arrives, I celebrate the beautiful soul you are.
-          Thank you for your love, strength, and warmth. You mean the world to me.
-          <span className="block mt-3 text-xl">🎂 💝 ✨</span>
-        </p>
+          <br /><br />
+
+          Her warmth and generosity have created a ripple effect, touching
+          countless lives in ways we may never fully know — inspiring hope,
+          spreading love, and leaving a legacy of faith that continues to shape
+          our lives. It’s no wonder people fall in love with her instantly 😊 She
+          is a treasure, a gem, and a blessing beyond measure.
+
+          <br /><br />
+
+          We are grateful for the values and lessons she has instilled in us, and
+          for the example she sets as a wife, mom, and friend. As we celebrate her
+          birthday, we also celebrate the incredible woman God has shaped her to
+          be — a woman of grace, compassion, and unwavering faith.
+
+          <br /><br />
+
+          Thank you, Mummy Yanu, for being such a priceless blessing. Your impact
+          will be felt for generations to come, and your love will forever
+          inspire us to live lives that honor God and bless others ✨
+        </motion.p>
+
+        {/* Signature */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.6, duration: 1 }}
+          className="mt-8 flex flex-col items-center gap-1"
+        >
+   <div className="text-xl sm:text-2xl font-semibold tracking-wide">
+  Muregold 🌹🌹🌹
+</div>
+
+<span className="text-lg font-light">&</span>
+
+<div className="text-xl sm:text-2xl font-semibold tracking-wide">
+  Imisioluwa 🌸🌸🌸
+</div>
+        </motion.div>
       </motion.div>
     </div>
   );
 };
 
-const TimeBox = ({ label, value }: { label: string; value: number }) => (
-  <div className="flex flex-col items-center bg-white/10 rounded-lg px-3 py-2 min-w-15">
-    <span className="text-xl sm:text-2xl">
-      {String(value).padStart(2, "0")}
-    </span>
-    <span className="text-[10px] uppercase tracking-widest text-pink-200">
-      {label}
-    </span>
-  </div>
-);
-
-export default App;
+export default Birthday;
